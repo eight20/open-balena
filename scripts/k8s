@@ -27,8 +27,8 @@ fi
 # Uninstall
 if [ "$@" = "uninstall" ]; then
   helm uninstall openbalena --namespace openbalena
-  kubectl delete -f "${BASE_DIR}/k8s/namespace.yml"
-  kubectl delete ns cert-manager
+  kubectl delete namespace openbalena
+  kubectl delete namespace cert-manager
   exit 0
 fi
 
@@ -39,7 +39,7 @@ install_certmanager () {
 
 install_openbalena () {
   # Create namespace
-  kubectl apply -f "${BASE_DIR}/k8s/namespace.yml"
+  kubectl create namespace openbalena || true
 
   # Helm
   helm dependency update "${BASE_DIR}/k8s/chart"
