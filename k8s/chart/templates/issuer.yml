@@ -5,7 +5,7 @@ metadata:
   namespace: openbalena
 spec:
   acme:
-    email: ${OPENBALENA_SUPERUSER_EMAIL}
+    email: {{ index .Values "config" "email" }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod
