@@ -11,7 +11,7 @@ echo_bold() {
   printf "\\033[1m%s\\033[0m\\n" "$@"
 }
 
-VERSIONS_FILE="${BASE_DIR}/compose/versions"
+VERSIONS_FILE="${BASE_DIR}/k8s/versions"
 if [ ! -f "$VERSIONS_FILE" ]; then
   echo_bold "No service versions defined in ${VERSIONS_FILE}"
   exit 1
