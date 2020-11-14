@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: openbalena-ingress
@@ -25,28 +25,37 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: openbalena-api
-          servicePort: 80
+          service:
+            name: openbalena-api
+            port:
+              number: 80
   - host: registry.{{ index .Values "hostname" }}
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: openbalena-registry
-          servicePort: 80
+          service:
+            name: openbalena-registry
+            port:
+              number: 80
 
   {{- if index .Values "deployments" "s3" "enabled" }}
   - host: s3.{{ index .Values "hostname" }}
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: openbalena-s3
-          servicePort: 80
+          service:
+            name: openbalena-s3
+            port:
+              number: 80
   {{- end }}
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: openbalena-ingress-vpn
@@ -55,6 +64,7 @@ metadata:
     app: openbalena
     component: ingress-vpn
   annotations:
+    cert-manager.io/issuer: "letsencrypt-prod"
     kubernetes.io/ingress.class: "haproxy"
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
@@ -63,6 +73,9 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: openbalena-vpn
-          servicePort: 80
+          service:
+            name: openbalena-vpn
+            port:
+              number: 80
