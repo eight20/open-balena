@@ -1,15 +1,26 @@
+{{- if .Values.issuer.enabled -}}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: letsencrypt-prod
-  namespace: openbalena
+  name: {{ .Values.issuer.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
 spec:
   acme:
-    email: {{ index .Values "config" "email" }}
-    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.issuer.email }}
+    server: {{ .Values.issuer.server }}
+    {{- if .Values.issuer.preferredChain }}
+    preferredChain: {{ .Values.issuer.preferredChain }}
+    {{- end }}
+    {{- with .Values.issuer.externalAccountBinding }}
+    externalAccountBinding:
+      {{ toYaml . | indent 8 }}
+    {{- end }}
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: {{ .Values.issuer.secretName }}
+    {{- with .Values.issuer.solvers  }}
     solvers:
-    - http01:
-        ingress:
-          class: nginx
+      {{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}

@@ -1,81 +1,38 @@
+{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: openbalena-ingress
-  namespace: {{ index .Values "namespace" }}
+  name: {{ include "openbalena.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: openbalena
-    component: ingress
+    {{- include "openbalena.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-    cert-manager.io/issuer: "letsencrypt-prod"
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/proxy-body-size: "{{ index .Values "config" "client-max-body-size" }}"
-spec:
-  tls:
-  - hosts:
-    - api.{{ index .Values "hostname" }}
-    - registry.{{ index .Values "hostname" }}
-
-    {{- if index .Values "deployments" "s3" "enabled" }}
-    - s3.{{ index .Values "hostname" }}
-    {{- end }}
-    secretName: echo-tls
-  rules:
-  - host: api.{{ index .Values "hostname" }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: openbalena-api
-            port:
-              number: 80
-  - host: registry.{{ index .Values "hostname" }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: openbalena-registry
-            port:
-              number: 80
-
-  {{- if index .Values "deployments" "s3" "enabled" }}
-  - host: s3.{{ index .Values "hostname" }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: openbalena-s3
-            port:
-              number: 80
+    {{- toYaml . | nindent 4 }}
   {{- end }}
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: openbalena-ingress-vpn
-  namespace: {{ index .Values "namespace" }}
-  labels:
-    app: openbalena
-    component: ingress-vpn
-  annotations:
-    cert-manager.io/issuer: "letsencrypt-prod"
-    kubernetes.io/ingress.class: "haproxy"
-    ingress.kubernetes.io/ssl-redirect: "false"
 spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
   rules:
-  - host: vpn.{{ index .Values "hostname" }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: openbalena-vpn
-            port:
-              number: 80
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            backend:
+              service:
+                name: {{ .backend.serviceName }}
+                port:
+                  number: {{ .backend.servicePort }}
+          {{- end }}
+    {{- end }}
+{{- end }}
