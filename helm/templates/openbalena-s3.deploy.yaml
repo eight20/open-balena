@@ -66,23 +66,4 @@ spec:
       resources:
         requests:
           storage: {{ index .Values "deployments" "s3" "volume" "storage" }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  creationTimestamp: null
-  labels:
-    app: openbalena
-    component: s3
-  name: openbalena-s3
-spec:
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
-  selector:
-    app: openbalena
-    component: s3
-status:
-  loadBalancer: {}
 {{- end }}

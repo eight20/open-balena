@@ -41,22 +41,3 @@ spec:
       resources:
         requests:
           storage: {{ index .Values "deployments" "db" "volume" "storage" }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  creationTimestamp: null
-  labels:
-    app: openbalena
-    component: db
-  name: openbalena-db
-spec:
-  ports:
-  - port: 5432
-    protocol: TCP
-    targetPort: 5432
-  selector:
-    app: openbalena
-    component: db
-status:
-  loadBalancer: {}

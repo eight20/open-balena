@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.vpn.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
+    app.kubernetes.io/component: vpn
+  {{- with .Values.service.vpn.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    {{- include "openbalena.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: vpn
+  ports:
+    {{- range .Values.service.vpn.ports }}
+    - port: {{ .port }}
+      {{- if .targetPort }}
+      targetPort: {{ .targetPort }}
+      {{- end }}
+      {{- if .protocol }}
+      protocol: {{ .protocol }}
+      {{- end }}
+      {{- if .name }}
+      name: {{ .name }}
+      {{- end }}
+    {{- end }}
+  {{- with .Values.service.vpn.externalIPs }}
+  externalIPs:
+    {{- toYaml . | indent 4 }}
+  {{- end }}

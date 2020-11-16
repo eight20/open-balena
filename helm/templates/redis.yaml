@@ -1,12 +1,11 @@
-{{- if index .Values "deployments" "redis" "enabled" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   creationTimestamp: null
+  name: openbalena-redis
   labels:
     app: openbalena
     component: redis
-  name: openbalena-redis
 spec:
   serviceName: openbalena-redis
   replicas: {{ index .Values "deployments" "redis" "replicas" }}
@@ -42,23 +41,3 @@ spec:
       resources:
         requests:
           storage: {{ index .Values "deployments" "redis" "volume" "storage" }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  creationTimestamp: null
-  labels:
-    app: openbalena
-    component: redis
-  name: openbalena-redis
-spec:
-  ports:
-  - port: 6379
-    protocol: TCP
-    targetPort: {{ index .Values "deployments" "redis" "config" "port" }}
-  selector:
-    app: openbalena
-    component: redis
-status:
-  loadBalancer: {}
-{{- end }}
