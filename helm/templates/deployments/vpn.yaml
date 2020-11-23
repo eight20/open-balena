@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.vpn.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
+    app.kubernetes.io/component: vpn
+spec:
+  selector:
+    matchLabels:
+      {{- include "openbalena.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: vpn
+  {{- if .Values.vpn.replicas }}
+  replicas: {{ .Values.vpn.replicas }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "openbalena.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: vpn
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-vpn
+          image: "{{ .Values.vpn.image.repository }}:{{ .Values.vpn.image.tag }}"
+          {{- if .Values.vpn.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.vpn.image.pullPolicy }}
+          {{- end }}
+          # XXX ports
+          # TODO tmpfs (/run, /sys/fs/cgroup)
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN", "SYS_RESOURCE", "NET_ADMIN"]
+          env:
+          - name: CONFD_BACKEND
+            value: "ENV"
+          {{- with .Values.vpn.env }}  # XXX
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+      {{- with .Values.vpn.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpn.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpn.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

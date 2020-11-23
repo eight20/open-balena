@@ -19,7 +19,7 @@ spec:
     {{- end }}
     privateKeySecretRef:
       name: {{ .Values.issuer.secretName }}
-    {{- with .Values.issuer.solvers  }}
+    {{- with .Values.issuer.solvers }}
     solvers:
       {{ toYaml . | indent 8 }}
     {{- end }}

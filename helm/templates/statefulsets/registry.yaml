@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.registry.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
+    app.kubernetes.io/component: registry
+spec:
+  selector:
+    matchLabels:
+      {{- include "openbalena.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: registry
+  serviceName: {{ .Values.service.registry.name }}
+  {{- if .Values.registry.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.registry.podManagementPolicy }}
+  {{- end }}
+  {{- if .Values.registry.replicas }}
+  replicas: {{ .Values.registry.replicas }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "openbalena.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: registry
+    spec:
+      {{- if .Values.registry.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.registry.terminationGracePeriodSeconds }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-registry
+        image: "{{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}"
+        # XXX ports
+        volumeMounts:  # TODO tmpfs (/run, /sys/fs/cgroup)
+        - name: {{ .Values.registry.name }}
+          mountPath: /data
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_ADMIN", "SYS_RESOURCE"]
+        env:
+        - name: CONFD_BACKEND
+          value: "ENV"
+        - name: REGISTRY2_STORAGEPATH
+          value: "/data"
+        {{- with .Values.registry.env }}  # XXX
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.registry.name }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.registry.storageClassName }}
+      storageClassName: {{ .Values.registry.storageClassName }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.registry.storage }}

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.db.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openbalena.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db
+spec:
+  selector:
+    matchLabels:
+      {{- include "openbalena.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: db
+  serviceName: {{ .Values.service.db.name }}
+  {{- if .Values.db.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.db.podManagementPolicy }}
+  {{- end }}
+  {{- if .Values.db.replicas }}
+  replicas: {{ .Values.db.replicas }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "openbalena.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db
+    spec:
+      {{- if .Values.db.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.db.terminationGracePeriodSeconds }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-db
+        image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+        # XXX ports
+        volumeMounts:
+        - name: {{ .Values.db.name }}
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.db.name }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.db.storageClassName }}
+      storageClassName: {{ .Values.db.storageClassName }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.db.storage }}
