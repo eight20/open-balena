@@ -12,11 +12,11 @@ spec:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: db
   serviceName: {{ include "openbalena.db.fullname" . }}
-  {{- if .Values.db.podManagementPolicy }}
-  podManagementPolicy: {{ .Values.db.podManagementPolicy }}
-  {{- end }}
   {{- if .Values.db.replicas }}
   replicas: {{ .Values.db.replicas }}
+  {{- end }}
+  {{- if .Values.db.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.db.podManagementPolicy }}
   {{- end }}
   template:
     metadata:
@@ -30,15 +30,18 @@ spec:
       containers:
       - name: {{ .Chart.Name }}-db
         image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
-        # XXX ports
+        {{- with .Values.db.ports }}
+        ports:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
-        - name: {{ .Values.db.name }}
+        - name: postgres-data
           mountPath: /var/lib/postgresql/data
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.db.name }}
+      name: postgres-data
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
       {{- if .Values.db.storageClassName }}
       storageClassName: {{ .Values.db.storageClassName }}
       {{- end }}

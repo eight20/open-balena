@@ -12,11 +12,11 @@ spec:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: s3
   serviceName: {{ include "openbalena.s3.fullname" . }}
-  {{- if .Values.s3.podManagementPolicy }}
-  podManagementPolicy: {{ .Values.s3.podManagementPolicy }}
-  {{- end }}
   {{- if .Values.s3.replicas }}
   replicas: {{ .Values.s3.replicas }}
+  {{- end }}
+  {{- if .Values.s3.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.s3.podManagementPolicy }}
   {{- end }}
   template:
     metadata:
@@ -30,9 +30,12 @@ spec:
       containers:
       - name: {{ .Chart.Name }}-s3
         image: "{{ .Values.s3.image.repository }}:{{ .Values.s3.image.tag }}"
-        # XXX ports
-        volumeMounts:  # TODO tmpfs (/run, /sys/fs/cgroup)
-        - name: {{ .Values.s3.name }}
+        {{- with .Values.s3.ports }}
+        ports:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - name: s3-export
           mountPath: /export
         securityContext:
           privileged: true
@@ -41,14 +44,14 @@ spec:
         env:
         - name: CONFD_BACKEND
           value: "ENV"
-        {{- with .Values.s3.env }}  # XXX
+        {{- with .Values.s3.env }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.s3.name }}
+      name: s3-export
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
       {{- if .Values.s3.storageClassName }}
       storageClassName: {{ .Values.s3.storageClassName }}
       {{- end }}

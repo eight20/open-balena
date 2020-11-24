@@ -12,11 +12,11 @@ spec:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: redis
   serviceName: {{ include "openbalena.redis.fullname" . }}
-  {{- if .Values.redis.podManagementPolicy }}
-  podManagementPolicy: {{ .Values.redis.podManagementPolicy }}
-  {{- end }}
   {{- if .Values.redis.replicas }}
   replicas: {{ .Values.redis.replicas }}
+  {{- end }}
+  {{- if .Values.redis.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.redis.podManagementPolicy }}
   {{- end }}
   template:
     metadata:
@@ -30,15 +30,18 @@ spec:
       containers:
       - name: {{ .Chart.Name }}-redis
         image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
-        # XXX ports
+        {{- with .Values.redis.ports }}
+        ports:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
-        - name: {{ .Values.redis.name }}
+        - name: redis-data
           mountPath: /data
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.redis.name }}
+      name: redis-data
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
       {{- if .Values.redis.storageClassName }}
       storageClassName: {{ .Values.redis.storageClassName }}
       {{- end }}

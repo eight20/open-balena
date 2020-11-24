@@ -29,7 +29,7 @@ spec:
           - path: {{ .path }}
             backend:
               service:
-                name: {{ .backend.serviceName }}
+                name: {{ include .backend.serviceName $ }}
                 port:
                   number: {{ .backend.servicePort }}
           {{- end }}

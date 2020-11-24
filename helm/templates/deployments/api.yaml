@@ -26,8 +26,10 @@ spec:
           {{- if .Values.api.image.pullPolicy }}
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
           {{- end }}
-          # XXX ports
-          # TODO tmpfs (/run, /sys/fs/cgroup)
+          {{- with .Values.api.ports }}
+          ports:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           securityContext:
             privileged: true
             capabilities:
@@ -35,7 +37,7 @@ spec:
           env:
           - name: CONFD_BACKEND
             value: "ENV"
-          {{- with .Values.api.env }}  # XXX
+          {{- with .Values.api.env }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
       {{- with .Values.api.nodeSelector }}

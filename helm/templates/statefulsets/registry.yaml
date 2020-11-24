@@ -12,11 +12,11 @@ spec:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: registry
   serviceName: {{ include "openbalena.registry.fullname" . }}
-  {{- if .Values.registry.podManagementPolicy }}
-  podManagementPolicy: {{ .Values.registry.podManagementPolicy }}
-  {{- end }}
   {{- if .Values.registry.replicas }}
   replicas: {{ .Values.registry.replicas }}
+  {{- end }}
+  {{- if .Values.registry.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.registry.podManagementPolicy }}
   {{- end }}
   template:
     metadata:
@@ -30,9 +30,12 @@ spec:
       containers:
       - name: {{ .Chart.Name }}-registry
         image: "{{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}"
-        # XXX ports
-        volumeMounts:  # TODO tmpfs (/run, /sys/fs/cgroup)
-        - name: {{ .Values.registry.name }}
+        {{- with .Values.registry.ports }}
+        ports:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - name: registry-data
           mountPath: /data
         securityContext:
           privileged: true
@@ -43,14 +46,14 @@ spec:
           value: "ENV"
         - name: REGISTRY2_STORAGEPATH
           value: "/data"
-        {{- with .Values.registry.env }}  # XXX
+        {{- with .Values.registry.env }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.registry.name }}
+      name: registry-data
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
       {{- if .Values.registry.storageClassName }}
       storageClassName: {{ .Values.registry.storageClassName }}
       {{- end }}
