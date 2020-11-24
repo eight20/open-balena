@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.service.s3.name }}
+  name: {{ include "openbalena.s3.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
     app.kubernetes.io/component: s3
-  {{- with .Values.service.s3.annotations }}
+  {{- with .Values.s3.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -15,7 +15,7 @@ spec:
     {{- include "openbalena.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: s3
   ports:
-    {{- range .Values.service.s3.ports }}
+    {{- range .Values.s3.service.ports }}
     - port: {{ .port }}
       {{- if .targetPort }}
       targetPort: {{ .targetPort }}
@@ -27,7 +27,7 @@ spec:
       name: {{ .name }}
       {{- end }}
     {{- end }}
-  {{- with .Values.service.s3.externalIPs }}
+  {{- with .Values.s3.service.externalIPs }}
   externalIPs:
     {{- toYaml . | indent 4 }}
   {{- end }}

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.redis.name }}
+  name: {{ include "openbalena.redis.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
@@ -11,7 +11,7 @@ spec:
     matchLabels:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: redis
-  serviceName: {{ .Values.service.redis.name }}
+  serviceName: {{ include "openbalena.redis.fullname" . }}
   {{- if .Values.redis.podManagementPolicy }}
   podManagementPolicy: {{ .Values.redis.podManagementPolicy }}
   {{- end }}

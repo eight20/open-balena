@@ -1,12 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tcp-configmap  # XXX
+  name: tcp
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
-data:  # XXX
-  443:
-    {{ .Release.Namespace }}/openbalena-vpn:443
-  3128:
-    {{ .Release.Namespace }}/openbalena-vpn:3128
+data:
+  443: {{ .Release.Namespace }}/{{ include "openbalena.vpn.fullname" . }}:443
+  3128: {{ .Release.Namespace }}/{{ include "openbalena.vpn.fullname" . }}:3128

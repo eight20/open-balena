@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.registry.name }}
+  name: {{ include "openbalena.registry.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
@@ -11,7 +11,7 @@ spec:
     matchLabels:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: registry
-  serviceName: {{ .Values.service.registry.name }}
+  serviceName: {{ include "openbalena.registry.fullname" . }}
   {{- if .Values.registry.podManagementPolicy }}
   podManagementPolicy: {{ .Values.registry.podManagementPolicy }}
   {{- end }}

@@ -1,4 +1,4 @@
-{{- if .Values.issuer.enabled -}}
+{{- if .Values.issuer.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -18,7 +18,7 @@ spec:
       {{ toYaml . | indent 8 }}
     {{- end }}
     privateKeySecretRef:
-      name: {{ .Values.issuer.secretName }}
+      name: {{ .Values.issuer.name }}
     {{- with .Values.issuer.solvers }}
     solvers:
       {{ toYaml . | indent 8 }}

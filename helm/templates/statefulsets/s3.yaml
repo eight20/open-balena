@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.s3.name }}
+  name: {{ include "openbalena.s3.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "openbalena.labels" . | nindent 4 }}
@@ -11,7 +11,7 @@ spec:
     matchLabels:
       {{- include "openbalena.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: s3
-  serviceName: {{ .Values.service.s3.name }}
+  serviceName: {{ include "openbalena.s3.fullname" . }}
   {{- if .Values.s3.podManagementPolicy }}
   podManagementPolicy: {{ .Values.s3.podManagementPolicy }}
   {{- end }}
