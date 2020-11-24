@@ -151,11 +151,107 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Common api labels
+*/}}
+{{- define "openbalena.api.labels" -}}
+{{ include "openbalena.labels" . }}
+app.kubernetes.io/component: api
+{{- end }}
+
+{{/*
+Common registry labels
+*/}}
+{{- define "openbalena.registry.labels" -}}
+{{ include "openbalena.labels" . }}
+app.kubernetes.io/component: registry
+{{- end }}
+
+{{/*
+Common vpn labels
+*/}}
+{{- define "openbalena.vpn.labels" -}}
+{{ include "openbalena.labels" . }}
+app.kubernetes.io/component: vpn
+{{- end }}
+
+{{/*
+Common db labels
+*/}}
+{{- define "openbalena.db.labels" -}}
+{{ include "openbalena.labels" . }}
+app.kubernetes.io/component: db
+{{- end }}
+
+{{/*
+Common s3 labels
+*/}}
+{{- define "openbalena.s3.labels" -}}
+{{ include "openbalena.labels" . }}
+app.kubernetes.io/component: s3
+{{- end }}
+
+{{/*
+Common redis labels
+*/}}
+{{- define "openbalena.redis.labels" -}}
+{{ include "openbalena.labels" . }}
+app.kubernetes.io/component: redis
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "openbalena.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "openbalena.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Selector api labels
+*/}}
+{{- define "openbalena.api.selectorLabels" -}}
+{{ include "openbalena.selectorLabels" . }}
+app.kubernetes.io/component: api
+{{- end }}
+
+{{/*
+Selector registry labels
+*/}}
+{{- define "openbalena.registry.selectorLabels" -}}
+{{ include "openbalena.selectorLabels" . }}
+app.kubernetes.io/component: registry
+{{- end }}
+
+{{/*
+Selector vpn labels
+*/}}
+{{- define "openbalena.vpn.selectorLabels" -}}
+{{ include "openbalena.selectorLabels" . }}
+app.kubernetes.io/component: vpn
+{{- end }}
+
+{{/*
+Selector db labels
+*/}}
+{{- define "openbalena.db.selectorLabels" -}}
+{{ include "openbalena.selectorLabels" . }}
+app.kubernetes.io/component: db
+{{- end }}
+
+{{/*
+Selector s3 labels
+*/}}
+{{- define "openbalena.s3.selectorLabels" -}}
+{{ include "openbalena.selectorLabels" . }}
+app.kubernetes.io/component: s3
+{{- end }}
+
+{{/*
+Selector redis labels
+*/}}
+{{- define "openbalena.redis.selectorLabels" -}}
+{{ include "openbalena.selectorLabels" . }}
+app.kubernetes.io/component: redis
 {{- end }}
 
 {{/*

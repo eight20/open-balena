@@ -4,16 +4,14 @@ metadata:
   name: {{ include "openbalena.registry.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: registry
+    {{- include "openbalena.registry.labels" . | nindent 4 }}
   {{- with .Values.registry.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   selector:
-    {{- include "openbalena.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: registry
+    {{- include "openbalena.registry.selectorLabels" . | nindent 4 }}
   ports:
     {{- range .Values.registry.service.ports }}
     - port: {{ .port }}

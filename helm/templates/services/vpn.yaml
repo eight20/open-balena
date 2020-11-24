@@ -4,16 +4,14 @@ metadata:
   name: {{ include "openbalena.vpn.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: vpn
+    {{- include "openbalena.vpn.labels" . | nindent 4 }}
   {{- with .Values.vpn.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   selector:
-    {{- include "openbalena.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: vpn
+    {{- include "openbalena.vpn.selectorLabels" . | nindent 4 }}
   ports:
     {{- range .Values.vpn.service.ports }}
     - port: {{ .port }}

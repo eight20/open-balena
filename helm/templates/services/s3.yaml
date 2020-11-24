@@ -4,16 +4,14 @@ metadata:
   name: {{ include "openbalena.s3.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: s3
+    {{- include "openbalena.s3.labels" . | nindent 4 }}
   {{- with .Values.s3.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   selector:
-    {{- include "openbalena.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: s3
+    {{- include "openbalena.s3.selectorLabels" . | nindent 4 }}
   ports:
     {{- range .Values.s3.service.ports }}
     - port: {{ .port }}

@@ -4,13 +4,11 @@ metadata:
   name: {{ include "openbalena.s3.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: s3
+    {{- include "openbalena.s3.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "openbalena.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: s3
+      {{- include "openbalena.s3.selectorLabels" . | nindent 6 }}
   serviceName: {{ include "openbalena.s3.fullname" . }}
   {{- if .Values.s3.replicas }}
   replicas: {{ .Values.s3.replicas }}
@@ -21,8 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "openbalena.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: s3
+        {{- include "openbalena.s3.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.s3.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.s3.terminationGracePeriodSeconds }}

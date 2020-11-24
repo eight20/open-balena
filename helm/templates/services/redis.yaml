@@ -4,16 +4,14 @@ metadata:
   name: {{ include "openbalena.redis.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: redis
+    {{- include "openbalena.redis.labels" . | nindent 4 }}
   {{- with .Values.redis.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   selector:
-    {{- include "openbalena.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: redis
+    {{- include "openbalena.redis.selectorLabels" . | nindent 4 }}
   ports:
     {{- range .Values.redis.service.ports }}
     - port: {{ .port }}

@@ -4,13 +4,11 @@ metadata:
   name: {{ include "openbalena.redis.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: redis
+    {{- include "openbalena.redis.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "openbalena.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: redis
+      {{- include "openbalena.redis.selectorLabels" . | nindent 6 }}
   serviceName: {{ include "openbalena.redis.fullname" . }}
   {{- if .Values.redis.replicas }}
   replicas: {{ .Values.redis.replicas }}
@@ -21,8 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "openbalena.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: redis
+        {{- include "openbalena.redis.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.redis.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.redis.terminationGracePeriodSeconds }}

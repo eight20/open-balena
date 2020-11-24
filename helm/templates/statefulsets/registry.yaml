@@ -4,13 +4,11 @@ metadata:
   name: {{ include "openbalena.registry.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: registry
+    {{- include "openbalena.registry.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "openbalena.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: registry
+      {{- include "openbalena.registry.selectorLabels" . | nindent 6 }}
   serviceName: {{ include "openbalena.registry.fullname" . }}
   {{- if .Values.registry.replicas }}
   replicas: {{ .Values.registry.replicas }}
@@ -21,8 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "openbalena.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: registry
+        {{- include "openbalena.registry.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.registry.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.registry.terminationGracePeriodSeconds }}

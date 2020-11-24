@@ -4,13 +4,11 @@ metadata:
   name: {{ include "openbalena.db.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "openbalena.labels" . | nindent 4 }}
-    app.kubernetes.io/component: db
+    {{- include "openbalena.db.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "openbalena.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: db
+      {{- include "openbalena.db.selectorLabels" . | nindent 6 }}
   serviceName: {{ include "openbalena.db.fullname" . }}
   {{- if .Values.db.replicas }}
   replicas: {{ .Values.db.replicas }}
@@ -21,8 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "openbalena.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: db
+        {{- include "openbalena.db.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.db.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.db.terminationGracePeriodSeconds }}
