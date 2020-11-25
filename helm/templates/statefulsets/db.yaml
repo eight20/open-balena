@@ -32,11 +32,15 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - name: postgres-data
-          mountPath: /var/lib/postgresql/data
+        - mountPath: /var/lib/postgresql/data
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: db-data
   volumeClaimTemplates:
   - metadata:
-      name: postgres-data
+      name: db-data
     spec:
       accessModes: ["ReadWriteOnce"]
       {{- if .Values.db.storageClassName }}

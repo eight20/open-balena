@@ -32,8 +32,12 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - name: registry-data
-          mountPath: /data
+        - mountPath: /data
+          name: data
+        - mountPath: /run
+          name: run
+        - mountPath: /sys/fs/cgroup
+          name: cgroup
         securityContext:
           privileged: true
           capabilities:
@@ -46,6 +50,16 @@ spec:
         {{- with .Values.registry.env }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: registry-data
+      - name: run
+        emptyDir:
+          medium: Memory
+      - name: cgroup
+        emptyDir:
+          medium: Memory
   volumeClaimTemplates:
   - metadata:
       name: registry-data

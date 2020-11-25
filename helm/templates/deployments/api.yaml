@@ -27,6 +27,11 @@ spec:
           ports:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts:
+          - mountPath: /run
+            name: run
+          - mountPath: /sys/fs/cgroup
+            name: cgroup
           securityContext:
             privileged: true
             capabilities:
@@ -37,6 +42,13 @@ spec:
           {{- with .Values.api.env }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
+      volumes:
+      - name: run
+        emptyDir:
+          medium: Memory
+      - name: cgroup
+        emptyDir:
+          medium: Memory
       {{- with .Values.api.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

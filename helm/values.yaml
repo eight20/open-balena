@@ -1,7 +1,6 @@
 # TODO HAProxy ConfigMap's ports from values?
-# TODO Comments for all values
 # TODO Move to ConfigMaps and Secrets
-# TODO tmpfs for /run and /sys/fs/cgroup
+# TODO Comments for all values
 
 issuer:
   enabled: ${OPENBALENA_ACME_CERT_ENABLED}

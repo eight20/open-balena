@@ -32,8 +32,12 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - name: s3-export
-          mountPath: /export
+        - mountPath: /export
+          name: export
+        - mountPath: /run
+          name: run
+        - mountPath: /sys/fs/cgroup
+          name: cgroup
         securityContext:
           privileged: true
           capabilities:
@@ -44,6 +48,16 @@ spec:
         {{- with .Values.s3.env }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
+      volumes:
+      - name: export
+        persistentVolumeClaim:
+          claimName: s3-export
+      - name: run
+        emptyDir:
+          medium: Memory
+      - name: cgroup
+        emptyDir:
+          medium: Memory
   volumeClaimTemplates:
   - metadata:
       name: s3-export
