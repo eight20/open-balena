@@ -155,7 +155,7 @@ Common api labels
 */}}
 {{- define "openbalena.api.labels" -}}
 {{ include "openbalena.labels" . }}
-app.kubernetes.io/component: api
+app.kubernetes.io/component: {{ .Values.api.name }}
 {{- end }}
 
 {{/*
@@ -163,7 +163,7 @@ Common registry labels
 */}}
 {{- define "openbalena.registry.labels" -}}
 {{ include "openbalena.labels" . }}
-app.kubernetes.io/component: registry
+app.kubernetes.io/component: {{ .Values.registry.name }}
 {{- end }}
 
 {{/*
@@ -171,7 +171,7 @@ Common vpn labels
 */}}
 {{- define "openbalena.vpn.labels" -}}
 {{ include "openbalena.labels" . }}
-app.kubernetes.io/component: vpn
+app.kubernetes.io/component: {{ .Values.vpn.name }}
 {{- end }}
 
 {{/*
@@ -179,7 +179,7 @@ Common db labels
 */}}
 {{- define "openbalena.db.labels" -}}
 {{ include "openbalena.labels" . }}
-app.kubernetes.io/component: db
+app.kubernetes.io/component: {{ .Values.db.name }}
 {{- end }}
 
 {{/*
@@ -187,7 +187,7 @@ Common s3 labels
 */}}
 {{- define "openbalena.s3.labels" -}}
 {{ include "openbalena.labels" . }}
-app.kubernetes.io/component: s3
+app.kubernetes.io/component: {{ .Values.s3.name }}
 {{- end }}
 
 {{/*
@@ -195,7 +195,7 @@ Common redis labels
 */}}
 {{- define "openbalena.redis.labels" -}}
 {{ include "openbalena.labels" . }}
-app.kubernetes.io/component: redis
+app.kubernetes.io/component: {{ .Values.redis.name }}
 {{- end }}
 
 {{/*
@@ -211,7 +211,7 @@ Selector api labels
 */}}
 {{- define "openbalena.api.selectorLabels" -}}
 {{ include "openbalena.selectorLabels" . }}
-app.kubernetes.io/component: api
+app.kubernetes.io/component: {{ .Values.api.name }}
 {{- end }}
 
 {{/*
@@ -219,7 +219,7 @@ Selector registry labels
 */}}
 {{- define "openbalena.registry.selectorLabels" -}}
 {{ include "openbalena.selectorLabels" . }}
-app.kubernetes.io/component: registry
+app.kubernetes.io/component: {{ .Values.registry.name }}
 {{- end }}
 
 {{/*
@@ -227,7 +227,7 @@ Selector vpn labels
 */}}
 {{- define "openbalena.vpn.selectorLabels" -}}
 {{ include "openbalena.selectorLabels" . }}
-app.kubernetes.io/component: vpn
+app.kubernetes.io/component: {{ .Values.vpn.name }}
 {{- end }}
 
 {{/*
@@ -235,7 +235,7 @@ Selector db labels
 */}}
 {{- define "openbalena.db.selectorLabels" -}}
 {{ include "openbalena.selectorLabels" . }}
-app.kubernetes.io/component: db
+app.kubernetes.io/component: {{ .Values.db.name }}
 {{- end }}
 
 {{/*
@@ -243,7 +243,7 @@ Selector s3 labels
 */}}
 {{- define "openbalena.s3.selectorLabels" -}}
 {{ include "openbalena.selectorLabels" . }}
-app.kubernetes.io/component: s3
+app.kubernetes.io/component: {{ .Values.s3.name }}
 {{- end }}
 
 {{/*
@@ -251,7 +251,7 @@ Selector redis labels
 */}}
 {{- define "openbalena.redis.selectorLabels" -}}
 {{ include "openbalena.selectorLabels" . }}
-app.kubernetes.io/component: redis
+app.kubernetes.io/component: {{ .Values.redis.name }}
 {{- end }}
 
 {{/*
