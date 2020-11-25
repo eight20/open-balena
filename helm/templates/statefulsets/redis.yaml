@@ -37,10 +37,10 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: redis-data
+          claimName: data
   volumeClaimTemplates:
   - metadata:
-      name: redis-data
+      name: data
     spec:
       accessModes: ["ReadWriteOnce"]
       {{- if .Values.redis.storageClassName }}

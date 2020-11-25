@@ -51,7 +51,7 @@ spec:
       volumes:
       - name: export
         persistentVolumeClaim:
-          claimName: s3-export
+          claimName: export
       - name: run
         emptyDir:
           medium: Memory
@@ -60,7 +60,7 @@ spec:
           medium: Memory
   volumeClaimTemplates:
   - metadata:
-      name: s3-export
+      name: export
     spec:
       accessModes: ["ReadWriteOnce"]
       {{- if .Values.s3.storageClassName }}

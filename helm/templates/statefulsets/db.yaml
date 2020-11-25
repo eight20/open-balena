@@ -37,10 +37,10 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: db-data
+          claimName: data
   volumeClaimTemplates:
   - metadata:
-      name: db-data
+      name: data
     spec:
       accessModes: ["ReadWriteOnce"]
       {{- if .Values.db.storageClassName }}

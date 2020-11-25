@@ -53,7 +53,7 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: registry-data
+          claimName: data
       - name: run
         emptyDir:
           medium: Memory
@@ -62,7 +62,7 @@ spec:
           medium: Memory
   volumeClaimTemplates:
   - metadata:
-      name: registry-data
+      name: data
     spec:
       accessModes: ["ReadWriteOnce"]
       {{- if .Values.registry.storageClassName }}
