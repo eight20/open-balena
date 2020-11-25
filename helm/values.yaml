@@ -1,14 +1,20 @@
+# TODO HAProxy ConfigMap's ports from values?
+# TODO Comments for all values
+# TODO Move to ConfigMaps and Secrets
+# TODO tmpfs for /run and /sys/fs/cgroup
+
 issuer:
   enabled: ${OPENBALENA_ACME_CERT_ENABLED}
-  name: letsencrypt-prod
-  server: https://acme-v02.api.letsencrypt.org/directory
+  name: letsencrypt-staging
+  # name: letsencrypt-prod
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  # server: https://acme-v02.api.letsencrypt.org/directory
   email: ${OPENBALENA_SUPERUSER_EMAIL}
   solvers:
     - http01:
         ingress:
           class: haproxy
 
-# TODO service name...
 ingress:
   annotations:
     kubernetes.io/ingress.class: haproxy
@@ -26,37 +32,32 @@ ingress:
         - path: /
           pathType: Prefix
           backend:
-            serviceName: openbalena-api
+            serviceName: "openbalena.api.fullname"
             servicePort: 80
     - host: registry.${OPENBALENA_HOST_NAME}
       paths:
         - path: /
           pathType: Prefix
           backend:
-            serviceName: openbalena-registry
+            serviceName: "openbalena.registry.fullname"
             servicePort: 80
     - host: vpn.${OPENBALENA_HOST_NAME}
       paths:
         - path: /
           pathType: Prefix
           backend:
-            serviceName: openbalena-vpn
+            serviceName: "openbalena.vpn.fullname"
             servicePort: 80
     - host: s3.${OPENBALENA_HOST_NAME}
       paths:
         - path: /
           pathType: Prefix
           backend:
-            serviceName: openbalena-s3
+            serviceName: "openbalena.s3.fullname"
             servicePort: 80
 
-# TODO For names, probably should define new functions in helper like in Prometheus? for different services
-# TODO You can see that's it's not the best right now when naming the release something different
-# TODO Comments for all values
-# TODO Consider moving to ConfigMaps and Secrets
-
 api:
-  name: openbalena-api
+  name: api
   image:
     repository: balena/open-balena-api
     tag: ${OPENBALENA_API_VERSION_TAG}
@@ -70,7 +71,7 @@ api:
       value: "${OPENBALENA_ROOT_CA}"
     - name: COOKIE_SESSION_SECRET
       value: "${OPENBALENA_COOKIE_SESSION_SECRET}"
-    - name: DB_HOST
+    - name: DB_HOST  # XXX
       value: "openbalena-db"
     - name: DB_PASSWORD
       value: "docker"
@@ -106,7 +107,7 @@ api:
       value: "__unused__"
     - name: PUBNUB_SUBSCRIBE_KEY
       value: "__unused__"
-    - name: REDIS_HOST
+    - name: REDIS_HOST  # XXX
       value: "openbalena-redis"
     - name: REDIS_PORT
       value: "6379"
@@ -140,14 +141,14 @@ api:
       value: "${OPENBALENA_SUPERUSER_PASSWORD}"
 
 registry:
-  name: openbalena-registry
+  name: registry
   image:
     repository: balena/open-balena-registry
     tag: ${OPENBALENA_REGISTRY_VERSION_TAG}
+  storage: "10Gi"
   service:
     ports:
       - port: 80
-  storage: "10Gi"
   env:
     - name: API_TOKENAUTH_CRT
       value: "${OPENBALENA_TOKEN_AUTH_PUB}"
@@ -183,7 +184,7 @@ registry:
       value: "${OPENBALENA_REGISTRY_SECRET_KEY}"
 
 vpn:
-  name: openbalena-vpn
+  name: vpn
   image:
     repository: balena/open-balena-vpn
     tag: ${OPENBALENA_VPN_VERSION_TAG}
@@ -224,24 +225,24 @@ vpn:
       value: "${OPENBALENA_VPN_SERVICE_API_KEY}"
 
 db:
-  name: openbalena-db
+  name: db
   image:
     repository: balena/open-balena-db
     tag: ${OPENBALENA_DB_VERSION_TAG}
+  storage: "10Gi"
   service:
     ports:
       - port: 5432
-  storage: "10Gi"
 
 s3:
-  name: openbalena-s3
+  name: s3
   image:
     repository: balena/open-balena-s3
     tag: ${OPENBALENA_S3_VERSION_TAG}
+  storage: "50Gi"
   service:
     ports:
       - port: 80
-  storage: "50Gi"
   env:
     - name: S3_MINIO_ACCESS_KEY
       value: "${OPENBALENA_S3_ACCESS_KEY}"
@@ -251,14 +252,14 @@ s3:
       value: "${OPENBALENA_S3_BUCKETS}"
 
 redis:
-  name: openbalena-redis
+  name: redis
   image:
     repository: redis
     tag: alpine
+  storage: "10Gi"
   service:
     ports:
       - port: 6379
-  storage: "10Gi"
 
 kubernetes-ingress:
   controller:
@@ -268,4 +269,4 @@ kubernetes-ingress:
           port: 3128
           targetPort: 3128
     extraArgs:
-      - --configmap-tcp-services=openbalena/tcp-configmap  # XXX
+      - --configmap-tcp-services=default/haproxy-tcpservices-configmap  # XXX
